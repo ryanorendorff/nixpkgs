@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , fetchPypi
 , buildPythonPackage
 , Mako
@@ -12,6 +13,7 @@
 , opencl-headers
 , ocl-icd
 , pybind11
+, libGL_driver
 }:
 
 buildPythonPackage rec {
@@ -19,7 +21,9 @@ buildPythonPackage rec {
   version = "2020.2.1";
 
   checkInputs = [ pytest ];
-  buildInputs = [ opencl-headers ocl-icd pybind11 ];
+  buildInputs = [ opencl-headers pybind11 ]
+    ++ lib.optionals stdenv.isDarwin [ libGL_driver ]
+    ++ lib.optionals stdenv.isLinux [ ocl-icd ];
 
   propagatedBuildInputs = [ numpy cffi pytools decorator appdirs six Mako ];
 
